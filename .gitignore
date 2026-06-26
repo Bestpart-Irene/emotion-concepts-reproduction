@@ -1,0 +1,44 @@
+# ============================================================
+#  SECRETS — never commit. The real HF_TOKEN / OPENAI_API_KEY
+#  live ONLY on the cluster at ~/.config/traitinterp/env (chmod 600).
+# ============================================================
+*.env
+.env
+env
+**/env
+*.key
+*.pem
+*secret*
+*token*
+*credential*
+**/.config/**
+
+# ============================================================
+#  Cluster runtime artifacts (account-specific, regenerated)
+# ============================================================
+logs/
+*.out
+*.err
+slurm-*.out
+checkpoints/
+*.ckpt
+hf_cache/
+
+# ============================================================
+#  Large / upstream-redistributable data (fetch from the
+#  traitinterp emotion-concepts-v1 release; see README)
+# ============================================================
+notebook/data/
+*.tar.zst
+*.safetensors
+*.pt
+
+# ============================================================
+#  Generated / OS / Python
+# ============================================================
+notebook/*.html
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+**/.DS_Store
