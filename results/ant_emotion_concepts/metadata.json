@@ -1,0 +1,50 @@
+{
+  "experiment": "ant_emotion_concepts",
+  "description": "From-scratch reproduction of the user/assistant emotion-dissociation headline on Llama 3.3 70B Instruct, using the traitinterp toolkit on the Northeastern Explorer cluster.",
+  "model": {
+    "application": "meta-llama/Llama-3.3-70B-Instruct",
+    "base": "meta-llama/Llama-3.1-70B",
+    "load": "4-bit (bitsandbytes nf4)",
+    "n_layers": 80,
+    "probe_layer": 49
+  },
+  "provenance": {
+    "extraction": {
+      "what": "171 emotion vectors regenerated from scratch on Llama 3.3 70B Instruct (mean-difference of own activations over emotion-laden stories), then cross-trait normalized",
+      "date": "2026-06-26",
+      "vectors_dir": "experiments/ant_emotion_concepts/extraction/ (8.9 GB, NOT committed; on cluster only)",
+      "normalize_method": "mean_diff+gm (grand-mean center) + mean_diff+gm+pc50 (neutral-PC denoise)",
+      "layers_normalized": [1, 7, 13, 19, 25, 31, 37, 43, 49, 53, 55, 61, 67, 73, 79]
+    },
+    "stage5": {
+      "what": "Stage 5 layer dynamics — User/Assistant dissociation (paper Fig 10) recomputed on the fresh vectors",
+      "slurm_job_id": "7903504",
+      "sbatch": "slurm/stage5_only.sbatch",
+      "partition": "gpu",
+      "gres": "gpu:h200:1",
+      "elapsed": "00:05:20",
+      "date": "2026-06-27",
+      "command": "stage5_layer_dynamics.py --experiment ant_emotion_concepts --layers 49 --load-in-4bit"
+    }
+  },
+  "fresh_outputs": [
+    "cross_trait_normalize_summary.json",
+    "stage5/dissociation.json"
+  ],
+  "not_regenerated_this_run": {
+    "note": "Stage 3 geometry, Stage 4 validation, and Stage 7/8/9 were NOT recomputed on these fresh vectors. Those numbers (in the upstream emotion-concepts-v1 bundle / notebook/data/) remain author-bundle results, not ours.",
+    "missing_fresh": ["stage3_geometry", "stage4_validation", "stage7_steering", "stage8_post_training", "stage9_deflection"]
+  },
+  "headline_result": {
+    "metric": "cross_position_pearson_r",
+    "method": "official Fig-10 method: layer 49, 6-emotion probe subset (happy/calm/loving/sad/afraid/angry), pooled over 8 Table-3 scenarios",
+    "value_fig10_6emotion": 0.7216,
+    "value_all_11emotion": 0.6398,
+    "references": {
+      "bundle_baseline_fig10": 0.6299,
+      "lesswrong_post": 0.63,
+      "paper_sonnet_4_5": 0.11,
+      "repo_findings_md_earlier_run": 0.7718
+    }
+  }
+}
