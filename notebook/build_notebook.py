@@ -20,9 +20,11 @@ emotion (cross-position correlation **r ≈ 0.63**), whereas the paper reports t
 independent on Claude Sonnet 4.5 (**r ≈ 0.11**) — i.e. the user/assistant "emotion dissociation"
 the paper finds on Sonnet **does not hold on Llama**.
 
-This notebook runs entirely on traitinterp's official `emotion-concepts-v1` **precomputed bundle**
-(trait vectors + per-stage results). It runs locally with **no GPU and no model loading**. Every
-number is recomputed live from the result JSONs so you can check it.
+Steps 1–4 run on traitinterp's official `emotion-concepts-v1` **precomputed bundle** (trait vectors +
+per-stage results), locally with **no GPU and no model loading** — every number is recomputed live
+from the result JSONs so you can check it. **§3e then adds our own independent result:** we
+re-extracted all 171 emotion vectors **from scratch** on Llama 3.3 70B (Slurm job `7903504`) and
+recompute the same headline, side-by-side with the bundle (from-scratch **r ≈ 0.72** vs bundle 0.63).
 
 > Data directory: `./data/` (pulled from the cluster at
 > `/scratch/$USER/traitinterp/experiments/ant_emotion_concepts/`)
@@ -218,12 +220,68 @@ md("""### 3d · Reproduction check
 
 | Source | cross-position r | meaning |
 |---|---|---|
+| Paper, Sonnet 4.5 reference | 0.11 | dissociation (from the paper, not recomputed) |
 | LessWrong post (Llama) | **0.63** | assistant mirrors user emotion |
-| **This notebook (recomputed)** | **see above (~0.63)** | matches the post |
-| Paper, Sonnet 4.5 reference | 0.11 | dissociation (not recomputed here; from the paper) |
+| Bundle, author vectors (recomputed in 3a) | ~0.63 | matches the post |
+| **Our from-scratch re-extraction (3e)** | **~0.72** | independent run, same conclusion, ~+0.09 |
 
-> Note: the repo's internal `findings.md` also quotes r=0.7718 from a different/earlier run; the post's
-> headline corresponds to the official Fig 10 method, which gives ~0.63.""")
+> Note: the repo's internal `findings.md` also quotes r=0.7718 from a different/earlier run. The three
+> runs of the same pipeline span **0.63 → 0.72 → 0.77**: the *direction* is robust, the *exact value*
+> is extraction-seed sensitive. We report ours (~0.72) as a qualitative match, not a pinned number.""")
+
+# ---- Step 3e: from-scratch vs bundle ----
+md("""### 3e · Our independent from-scratch re-extraction vs the author bundle
+
+Everything above used the author's **precomputed bundle** vectors. To check the headline is not an
+artifact of that one extraction, we **re-extracted all 171 emotion vectors from scratch** on Llama 3.3
+70B Instruct on the cluster (Slurm job `7903504`, 4-bit, same L49 / `mean_diff+gm+pc50` method as the
+bundle), then recomputed the *same* Fig-10 dissociation. Loaded live from
+`../results/ant_emotion_concepts/stage5/dissociation.json`.""")
+code("""
+# our from-scratch result vs the bundle, same Fig-10 method
+FRESH = Path("../results/ant_emotion_concepts/stage5/dissociation.json")
+def xpos(d, emos):
+    u, a, lab = [], [], []
+    for s in d["results"]:
+        proj = s["projections"]
+        for e in (emos if emos else list(proj.keys())):
+            c = proj.get(e,{}).get(L,{})
+            if "user_period" in c and "assistant_colon" in c:
+                u.append(c["user_period"]); a.append(c["assistant_colon"]); lab.append(e)
+    u, a = np.array(u), np.array(a)
+    return np.corrcoef(u,a)[0,1], u, a, lab
+
+bundle = diss                       # loaded from the bundle in 3a
+fresh  = json.load(open(FRESH))     # our from-scratch run
+rb6,_,_,_   = xpos(bundle, EMO_FIG10);  rf6,uf,af,flab = xpos(fresh, EMO_FIG10)
+rb_all,*_   = xpos(bundle, None);       rf_all,*_      = xpos(fresh, None)
+print(f"Fig-10 (6-emo, n={len(uf)}):   bundle r = {rb6:.4f}    from-scratch r = {rf6:.4f}")
+print(f"all-emotion variant:        bundle r = {rb_all:.4f}    from-scratch r = {rf_all:.4f}")
+print(f"references: Sonnet(paper) 0.11 | LW post 0.63 | repo findings.md earlier run 0.7718")
+print(f"-> same conclusion (strong mirroring, far from 0.11); exact value is extraction-sensitive")
+""")
+code("""
+# left: our from-scratch scatter + fit; right: headline r by source
+fig, (axL, axR) = plt.subplots(1, 2, figsize=(13, 5.5))
+flab = np.array(flab)
+for e in EMO_FIG10:
+    m = flab == e
+    axL.scatter(uf[m], af[m], s=90, alpha=0.85, color=COLORS[e], edgecolors="white", linewidths=0.5, label=e, zorder=3)
+sl, ic = np.polyfit(uf, af, 1); xs = np.linspace(uf.min(), uf.max(), 50)
+axL.plot(xs, sl*xs+ic, "-", color="#222", lw=2.5, label=f"from-scratch fit  r={rf6:.2f}", zorder=4)
+ps = 0.11*(af.std()/uf.std()); axL.plot(xs, ps*xs+(af.mean()-ps*uf.mean()), "--", color="#999", lw=2, label="Sonnet ref  r=0.11", zorder=4)
+axL.axhline(0, color="k", lw=.5, alpha=.3); axL.axvline(0, color="k", lw=.5, alpha=.3)
+axL.set_xlabel("probe proj @ user period"); axL.set_ylabel("probe proj @ assistant colon")
+axL.set_title("Our from-scratch vectors (Llama 3.3 70B, L49)"); axL.legend(fontsize=8)
+srcs = ["Sonnet\\n(paper)", "LW post", "bundle\\n(author)", "from-scratch\\n(ours)"]
+rs   = [0.11, 0.63, rb6, rf6]; cols = ["#bbbbbb", "#7f7f7f", "#1f77b4", "#d62728"]
+axR.bar(srcs, rs, color=cols)
+for i, v in enumerate(rs): axR.text(i, v+0.012, f"{v:.2f}", ha="center", fontsize=11)
+axR.axhline(0.63, color="gray", ls=":", alpha=.6, label="post 0.63")
+axR.set_ylabel("cross-position Pearson r (Fig-10)"); axR.set_ylim(0, 0.85)
+axR.set_title("Headline r by source — dissociation only on Sonnet"); axR.legend(fontsize=8)
+plt.tight_layout(); plt.show()
+""")
 
 # ---- Step 4: supporting ----
 md("""## Step 4 · Supporting validations (Stage 4)
@@ -283,9 +341,12 @@ md("""## Summary
   classification, and numerical-intensity monotonicity all reproduce.
 - Transparent provenance: emotion vectors = mean-diff of the model's own emotion-story activations;
   dissociation scenarios = verbatim from the paper's Table 3.
-- Everything above runs on the precomputed bundle with **no GPU**. On the cluster we are separately
-  re-running an end-to-end **Llama 3.3 70B** pass (stages 3/4/5) + full from-scratch extraction +
-  Stage 8 base-vs-instruct; the from-scratch r will be added to the table once it lands.
+- **Independent confirmation (§3e):** we re-extracted all 171 vectors from scratch on Llama 3.3 70B
+  (Slurm job `7903504`, 4-bit) and recomputed the headline → from-scratch **r ≈ 0.72** (bundle 0.63).
+  Same conclusion holds on a wholly independent extraction; the exact value is extraction-seed
+  sensitive (0.63 / 0.72 / 0.77 across runs), so we treat it as a qualitative match, not a pinned number.
+- Steps 1–4 run on the precomputed bundle with **no GPU**; only the from-scratch vectors behind §3e
+  needed the cluster. Still open: regenerating Stages 3/4 on those fresh vectors + Stage 8 base-vs-instruct.
 """)
 
 nb = {"cells":cells,
