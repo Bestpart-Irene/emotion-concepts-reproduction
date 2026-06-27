@@ -1,0 +1,81 @@
+{
+  "layers": {
+    "1": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 12
+    },
+    "7": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 17
+    },
+    "13": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 18
+    },
+    "19": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 19
+    },
+    "25": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 21
+    },
+    "31": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 21
+    },
+    "37": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 21
+    },
+    "43": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 21
+    },
+    "49": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 21
+    },
+    "53": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 22
+    },
+    "55": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 22
+    },
+    "61": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 22
+    },
+    "67": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 22
+    },
+    "73": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 23
+    },
+    "79": {
+      "n_gm": 171,
+      "n_pc": 171,
+      "n_pcs_removed": 19
+    }
+  },
+  "gm_method": "mean_diff+gm",
+  "pc_method": "mean_diff+gm+pc50"
+}

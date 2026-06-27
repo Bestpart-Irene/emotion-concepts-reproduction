@@ -26,6 +26,14 @@ from-scratch run (regenerating the vectors on 70B, then recomputing) runs on the
 | `slurm/` | Slurm job scripts for the cluster (env setup, model precache, full extraction, Stage 8) |
 | `RUNBOOK.md` | End-to-end cluster runbook (paths, steps, expected metrics) |
 | `DISCIPLINE.md` | Lightweight single-change / read-only experiment discipline |
+| `CLAUDE.md` | Claude Code project instructions (entry point: `claude --agent coordinator`) |
+| `.claude/agents/` | Read-only research subagents — `coordinator`, `planner`, `researcher`, `reporter` |
+| `research/` | Durable lab notebook — `results.tsv` ledger, `notes.md`, `do-not-repeat.md`, `paper-ideas.md`, `templates/`, `campaigns/` |
+| `scripts/` | Slurm managed runner (`slurm_runner.py`), metric recompute (`parse_metric.py`), ledger append (`record_run.py`) |
+
+A lightweight subset of [burtenshaw/multiautoresearch](https://github.com/burtenshaw/multiautoresearch)'s
+orchestration, adapted to this bounded reproduction (Claude Code agents + Slurm runner + a `research/`
+notebook); the upstream master/promotion/patch/worktree-fleet machinery is intentionally left out (see `CLAUDE.md`).
 
 > **Not committed** (see `.gitignore`): secrets/`env`, cluster logs, and `notebook/data/`
 > (the ~19 MB upstream bundle subset the notebook reads). The notebook is committed *with outputs
