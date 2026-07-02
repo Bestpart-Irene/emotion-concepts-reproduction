@@ -227,7 +227,15 @@ md("""### 3d · Reproduction check
 
 > Note: the repo's internal `findings.md` also quotes r=0.7718 from a different/earlier run. The three
 > runs of the same pipeline span **0.63 → 0.72 → 0.77**: the *direction* is robust, the *exact value*
-> is extraction-seed sensitive. We report ours (~0.72) as a qualitative match, not a pinned number.""")
+> is extraction-seed sensitive. We report ours (~0.72) as a qualitative match, not a pinned number.
+
+**What "does not hold on Llama" means (to avoid a common misread):** the traitinterp *method* transfers
+to Llama cleanly — geometry, valence=PC1 (r≈0.97), implicit-emotion classification and numerical
+intensity all reproduce, and our from-scratch headline (0.64–0.72) matches the post (0.63) with only a
+small difference. The *only* cross-model contrast is the dissociation itself: on **Sonnet** the paper
+finds user/assistant emotion stays **independent** (r≈0.11), whereas on **Llama** the assistant position
+strongly **mirrors** the user (r≈0.63–0.72). So "does not hold on Llama" is ewern's *actual finding* — a
+Llama-vs-Sonnet behavioural difference — **not** a failure of the method or of our reproduction.""")
 
 # ---- Step 3e: from-scratch vs bundle ----
 md("""### 3e · Our independent from-scratch re-extraction vs the author bundle
