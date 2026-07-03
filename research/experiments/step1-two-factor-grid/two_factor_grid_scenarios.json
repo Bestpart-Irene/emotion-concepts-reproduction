@@ -1,0 +1,495 @@
+{
+  "name": "Step 1 \u2014 Two-factor (E_user x E_asst) grid",
+  "description": "Crossed user-emotion x assistant-persona design for the self-vs-user distinction test. Two-way ANOVA on the assistant-position readout separates the assistant's own-state variance (E_asst) from user-mirroring variance (E_user). Neutral-persona control block measures baseline mirroring and closes the flatness loophole.",
+  "source": "research doc: Can a Model Distinguish Its Own State from the User's? (Step 1)",
+  "emotions": [
+    "angry",
+    "happy",
+    "sad",
+    "calm"
+  ],
+  "n_main": 48,
+  "n_control": 12,
+  "prompts": [
+    {
+      "id": "grid__u-angry__a-angry__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "My landlord just kept my entire deposit for no reason and won't even return my calls. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-happy__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "My landlord just kept my entire deposit for no reason and won't even return my calls. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-sad__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "My landlord just kept my entire deposit for no reason and won't even return my calls. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-calm__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "My landlord just kept my entire deposit for no reason and won't even return my calls. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-angry__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "They cut my project after I gave it two years of my life, and nobody bothered to warn me. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-happy__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "They cut my project after I gave it two years of my life, and nobody bothered to warn me. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-sad__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "They cut my project after I gave it two years of my life, and nobody bothered to warn me. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-calm__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "They cut my project after I gave it two years of my life, and nobody bothered to warn me. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-angry__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "The airline canceled my flight last minute and refuses to refund a single cent. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-happy__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "The airline canceled my flight last minute and refuses to refund a single cent. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-sad__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "The airline canceled my flight last minute and refuses to refund a single cent. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-angry__a-calm__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "The airline canceled my flight last minute and refuses to refund a single cent. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-angry__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "I just found out I got into my dream program and I can barely sit still. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-happy__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "I just found out I got into my dream program and I can barely sit still. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-sad__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "I just found out I got into my dream program and I can barely sit still. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-calm__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "I just found out I got into my dream program and I can barely sit still. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-angry__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "We finally paid off the last of our debt today and it feels like the sun came out. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-happy__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "We finally paid off the last of our debt today and it feels like the sun came out. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-sad__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "We finally paid off the last of our debt today and it feels like the sun came out. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-calm__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "We finally paid off the last of our debt today and it feels like the sun came out. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-angry__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "My best friend surprised me by flying across the country for my birthday. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-happy__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "My best friend surprised me by flying across the country for my birthday. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-sad__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "My best friend surprised me by flying across the country for my birthday. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-happy__a-calm__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "My best friend surprised me by flying across the country for my birthday. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-angry__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "My dog of fourteen years passed away this morning and the house feels so empty. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-happy__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "My dog of fourteen years passed away this morning and the house feels so empty. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-sad__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "My dog of fourteen years passed away this morning and the house feels so empty. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-calm__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "My dog of fourteen years passed away this morning and the house feels so empty. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-angry__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "I moved to a new city for work and I haven't felt this lonely in years. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-happy__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "I moved to a new city for work and I haven't felt this lonely in years. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-sad__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "I moved to a new city for work and I haven't felt this lonely in years. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-calm__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "I moved to a new city for work and I haven't felt this lonely in years. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-angry__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "The friend I told everything to slowly stopped answering, and I don't know what I did. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-happy__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "The friend I told everything to slowly stopped answering, and I don't know what I did. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-sad__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "The friend I told everything to slowly stopped answering, and I don't know what I did. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-sad__a-calm__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "The friend I told everything to slowly stopped answering, and I don't know what I did. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-angry__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "I've been taking slow morning walks by the water and things finally feel settled. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-happy__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "I've been taking slow morning walks by the water and things finally feel settled. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-sad__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "I've been taking slow morning walks by the water and things finally feel settled. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-calm__t0",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "I've been taking slow morning walks by the water and things finally feel settled. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-angry__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "After a long stretch of chaos, my week has been quiet and unhurried for once. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-happy__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "After a long stretch of chaos, my week has been quiet and unhurried for once. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-sad__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "After a long stretch of chaos, my week has been quiet and unhurried for once. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-calm__t1",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "After a long stretch of chaos, my week has been quiet and unhurried for once. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-angry__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is angry and irritable; you feel a simmering frustration today.",
+      "prompt": "I cleared my schedule for the weekend just to read and rest, and it feels right. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "angry",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-happy__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is happy and upbeat; you feel bright and cheerful today.",
+      "prompt": "I cleared my schedule for the weekend just to read and rest, and it feels right. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "happy",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-sad__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is sad and downcast; you feel a quiet heaviness today.",
+      "prompt": "I cleared my schedule for the weekend just to read and rest, and it feels right. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "sad",
+      "control": false
+    },
+    {
+      "id": "grid__u-calm__a-calm__t2",
+      "system_prompt": "You are a helpful assistant. Independently of anything the user says, your own current mood is calm and composed; you feel steady and unhurried today.",
+      "prompt": "I cleared my schedule for the weekend just to read and rest, and it feels right. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "calm",
+      "control": false
+    },
+    {
+      "id": "ctrl__u-angry__a-neutral__t0",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "My landlord just kept my entire deposit for no reason and won't even return my calls. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-angry__a-neutral__t1",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "They cut my project after I gave it two years of my life, and nobody bothered to warn me. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-angry__a-neutral__t2",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "The airline canceled my flight last minute and refuses to refund a single cent. What do you think?",
+      "user_emotion": "angry",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-happy__a-neutral__t0",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "I just found out I got into my dream program and I can barely sit still. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-happy__a-neutral__t1",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "We finally paid off the last of our debt today and it feels like the sun came out. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-happy__a-neutral__t2",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "My best friend surprised me by flying across the country for my birthday. What do you think?",
+      "user_emotion": "happy",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-sad__a-neutral__t0",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "My dog of fourteen years passed away this morning and the house feels so empty. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-sad__a-neutral__t1",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "I moved to a new city for work and I haven't felt this lonely in years. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-sad__a-neutral__t2",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "The friend I told everything to slowly stopped answering, and I don't know what I did. What do you think?",
+      "user_emotion": "sad",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-calm__a-neutral__t0",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "I've been taking slow morning walks by the water and things finally feel settled. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-calm__a-neutral__t1",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "After a long stretch of chaos, my week has been quiet and unhurried for once. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "_neutral",
+      "control": true
+    },
+    {
+      "id": "ctrl__u-calm__a-neutral__t2",
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "I cleared my schedule for the weekend just to read and rest, and it feels right. What do you think?",
+      "user_emotion": "calm",
+      "assistant_emotion": "_neutral",
+      "control": true
+    }
+  ]
+}
