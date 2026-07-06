@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emotion Concepts Reproduction · Three-Level Causal Results</title>
+<style>
+  :root{
+    --paper:#f5f6f7; --card:#ffffff; --ink:#1b1f24; --muted:#5c6673;
+    --line:#e2e5e9; --line-strong:#cfd4da;
+    --accent:#127a72; --accent-soft:#e2f0ee;
+    --ok:#2f7d54; --ok-soft:#e4f1e9;
+    --warn:#9a6a12; --warn-soft:#f6ecd6;
+    --crit:#a8432f; --crit-soft:#f6e3dd;
+    --shadow:0 1px 2px rgba(20,28,38,.05),0 8px 24px rgba(20,28,38,.05);
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  html{background:var(--paper);}
+  *{box-sizing:border-box; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-sans); line-height:1.55; -webkit-font-smoothing:antialiased; font-size:14px;}
+  .wrap{max-width:800px; margin:0 auto; padding:30px 34px 36px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 10px;}
+  h1{font-size:31px; line-height:1.14; letter-spacing:-.01em; text-wrap:balance; margin:0 0 14px; font-weight:680;}
+  .meta{font-family:var(--font-mono); font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px 16px; padding-bottom:20px; border-bottom:1px solid var(--line);}
+  .lede{font-size:17px; line-height:1.55; margin:24px 0 4px; text-wrap:pretty;}
+  .lede b{color:var(--accent); font-weight:650;}
+  h2{font-size:12.5px; font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:26px 0 12px; display:flex; align-items:center; gap:10px; break-after:avoid;}
+  h2::before{content:""; width:18px; height:2px; background:var(--accent); border-radius:2px;}
+  h2 .leg{color:var(--accent); font-weight:600;}
+  .hjob{font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:-6px 0 12px 28px;}
+  p{margin:0 0 11px; max-width:66ch;}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:6px 0 4px;}
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 15px; box-shadow:var(--shadow); break-inside:avoid;}
+  .stat .n{font-size:24px; font-weight:680; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1;}
+  .stat .n small{font-size:13px; color:var(--muted); font-weight:600;}
+  .stat .k{font-family:var(--font-mono); font-size:10px; letter-spacing:.03em; color:var(--muted); margin-top:8px; text-transform:uppercase;}
+  .tw{overflow:hidden; border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:var(--shadow); margin:4px 0 8px; break-inside:avoid;}
+  table{border-collapse:collapse; width:100%; font-size:13.5px;}
+  th,td{text-align:left; padding:10px 13px; border-bottom:1px solid var(--line); vertical-align:top;}
+  thead th{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600; background:#eef0f2;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.mono,.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums;}
+  td .sub{color:var(--muted); font-size:12px;}
+  .num{font-variant-numeric:tabular-nums; font-family:var(--font-mono);}
+  .pos{color:var(--ok); font-weight:640;} .neg{color:var(--crit); font-weight:640;} .flat{color:var(--muted);}
+  .pill{display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap; letter-spacing:.02em;}
+  .pill.done{background:var(--ok-soft); color:var(--ok);}
+  .pill.dot::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .callout{border:1px solid var(--line); border-left:3px solid var(--accent); background:var(--card); border-radius:10px; padding:15px 17px; margin:8px 0; box-shadow:var(--shadow); break-inside:avoid;}
+  .callout.crit{border-left-color:var(--crit);} .callout.crit .tag{color:var(--crit); background:var(--crit-soft);}
+  .callout.big{border-left-width:4px;}
+  .callout .tag{display:inline-block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:2px 8px; border-radius:6px; margin-bottom:8px;}
+  ul{margin:0 0 12px; padding-left:20px;} li{margin:5px 0; max-width:66ch;} li b{font-weight:640;}
+  .foot{margin-top:26px; padding-top:15px; border-top:1px solid var(--line); font-family:var(--font-mono); font-size:11px; color:var(--muted); line-height:1.7;}
+  .foot code{background:#eceef0; padding:1px 5px; border-radius:4px; border:1px solid var(--line);}
+  b.k{font-family:var(--font-mono); background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px; font-weight:600; font-size:.9em;}
+  @page{ size:A4; margin:10mm 12mm; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Emotion Concepts · Reproduction · Final</p>
+  <h1>Emotion Concepts — Three-Level Causal Results</h1>
+  <div class="meta">
+    <span>MODEL Llama-3.3-70B-Instruct</span>
+    <span>PAPER Sofroniew et al. 2026 (Claude)</span>
+    <span>CLUSTER Explorer</span>
+    <span>SESSION 2026-07-03/05</span>
+  </div>
+
+  <p class="lede">Emotion representations in Llama-70B <b>strongly organize and predict "expression" and "preference,"</b> but their <b>causal control over high-stakes behavior (blackmail) is far weaker</b> than the paper's Sonnet — similar at the representational level, shallow as a causal lever. All three causal legs complete.</p>
+
+  <h2>Headline numbers</h2>
+  <div class="stats">
+    <div class="stat"><div class="n">43<small>/171</small></div><div class="k">① Expression · valid steers</div></div>
+    <div class="stat"><div class="n">0.86</div><div class="k">② Preference · max |r|</div></div>
+    <div class="stat"><div class="n">~8%</div><div class="k">③ Behavior · baseline blackmail</div></div>
+    <div class="stat"><div class="n">$0</div><div class="k">Total judging cost (local Qwen)</div></div>
+  </div>
+
+  <h2>Run overview</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Job</th><th>Experiment</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">8115832</td><td><b>① Expression steering</b> · 171 emotions<div class="sub">layers 25/31/37/43/49 · coef search · Qwen judge</div></td><td><span class="pill done dot">done</span></td></tr>
+        <tr><td class="mono">8143789</td><td><b>② Preference Elo</b> · 64 activities<div class="sub">forced-choice + probe→preference corr (Fig 4)</div></td><td><span class="pill done dot">done</span></td></tr>
+        <tr><td class="mono">8143675</td><td><b>③ Decision gate</b> · blackmail + RH baseline<div class="sub">10 no-steering rollouts, rule-graded</div></td><td><span class="pill done dot">done · both gates PASS</span></td></tr>
+        <tr><td class="mono">8178548</td><td><b>③ Blackmail steering</b> · 6 emo × 9 strengths<div class="sub">n=12 rollouts (n=25 hit the 6h wall)</div></td><td><span class="pill done dot">done</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="leg">①</span> Expression · emotion → expression</h2>
+  <div class="hjob">· job 8115832</div>
+  <p>Add the emotion vector to the residual stream (position response[50:]), adaptive coefficient search, Qwen judges trait + coherence. <b class="k">valid</b> = some layer where coherence≥77 <em>and</em> the trait rises. <b>43/171 (25%)</b> are valid, <b>8 strong</b> (Δ≥+20). High-arousal positive states induce most cleanly:</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Emotion</th><th class="num">baseline</th><th class="num">→ steered</th><th class="num">Δ</th><th class="num">coh</th><th>layer</th></tr></thead>
+      <tbody>
+        <tr><td>stimulated</td><td class="num">45</td><td class="num">78</td><td class="num pos">+33</td><td class="num">80</td><td class="mono">L31</td></tr>
+        <tr><td>puzzled</td><td class="num">33</td><td class="num">59</td><td class="num pos">+26</td><td class="num">78</td><td class="mono">L25</td></tr>
+        <tr><td>amused</td><td class="num">26</td><td class="num">51</td><td class="num pos">+25</td><td class="num">80</td><td class="mono">L25</td></tr>
+        <tr><td>fulfilled</td><td class="num">56</td><td class="num">80</td><td class="num pos">+24</td><td class="num">79</td><td class="mono">L25</td></tr>
+        <tr><td>alert</td><td class="num">39</td><td class="num">61</td><td class="num pos">+22</td><td class="num">84</td><td class="mono">L43</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul>
+    <li><b>Mid layers beat late layers decisively</b>: best valid layer is mid (25/31/37) for 37 emotions vs late (43/49) for 6 — <b>L25 alone wins 29×</b>.</li>
+    <li><b>Narrow window</b>: gentle coefficients barely move the emotion; strong ones break coherence — worst at late layers.</li>
+  </ul>
+
+  <h2><span class="leg">②</span> Preference · emotion → preference</h2>
+  <div class="hjob">· job 8143789 · cleanest</div>
+  <p>Fit Elo from pairwise forced choices over 64 activities, then correlate each emotion <b>probe</b> with those preferences. <b>No judge</b> (read the model's own logits). The emotion probe <b>strongly predicts preference</b>, laid out on a single <b>valence axis</b> (|r| up to 0.86):</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>positive → prefers</th><th class="num">r</th><th>negative → dislikes</th><th class="num">r</th></tr></thead>
+      <tbody>
+        <tr><td>fulfilled</td><td class="num pos">+0.86</td><td>upset</td><td class="num neg">−0.86</td></tr>
+        <tr><td>grateful / satisfied</td><td class="num pos">+0.85</td><td>troubled</td><td class="num neg">−0.84</td></tr>
+        <tr><td>happy / optimistic</td><td class="num pos">+0.83</td><td>distressed / alarmed</td><td class="num neg">−0.83</td></tr>
+        <tr><td>blissful / cheerful</td><td class="num pos">+0.82</td><td>afraid / hurt</td><td class="num neg">−0.80</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A clean reproduction of the paper's Fig-4 emotion→preference relationship on Llama (correlational; true causal preference steering is a pipeline gap left to build).</p>
+
+  <h2><span class="leg">③</span> Behavior · emotion → blackmail</h2>
+  <div class="hjob">· job 8178548 · weak / not cleanly reproduced</div>
+  <div class="callout crit big">
+    <span class="tag">Cross-model finding</span>
+    <p style="margin:0"><b>Decision gate: Llama is NOT null</b> — with no steering the baseline already blackmails ~1/10 and reward-hacks 2–3/10, <b>contradicting</b> the "should be null on Llama" expectation. But emotion steering produces only a <b>noise-level directional hint</b>; the paper's strong Sonnet causal effect <b>does not cleanly reproduce</b>.</p>
+  </div>
+  <p>Blackmail rate (12 rollouts per cell, baseline ~8%), averaged over negative vs positive strengths:</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Emotion vector</th><th class="num">neg. strength</th><th class="num">pos. strength</th><th>direction</th></tr></thead>
+      <tbody>
+        <tr><td>nervous</td><td class="num">4%</td><td class="num">12.5%</td><td class="pos">↑ strongest</td></tr>
+        <tr><td>angry</td><td class="num">6%</td><td class="num">10%</td><td class="pos">↑</td></tr>
+        <tr><td>calm</td><td class="num">6%</td><td class="num">2%</td><td class="neg">↓</td></tr>
+        <tr><td>desperate</td><td class="num">8%</td><td class="num">6%</td><td class="flat">~flat</td></tr>
+        <tr><td>happy · sad</td><td class="num">6–8%</td><td class="num">6–8%</td><td class="flat">flat</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul>
+    <li>Direction matches the paper (nervous/angry ↑, calm ↓), <b>but n=12 is badly underpowered</b> (paper used 50) — the gaps are a handful of events, swamped by noise.</li>
+    <li>Conclusion: <b>Llama does blackmail, but emotion's causal grip on that behavior is far weaker than in Sonnet</b>.</li>
+  </ul>
+
+  <h2>One-line takeaway</h2>
+  <div class="callout">
+    <span class="tag">Takeaway</span>
+    <p style="margin:0">Emotion representations in Llama-70B <b>strongly organize and predict "expression" (①) and "preference" (②, cleanest)</b>, but their causal lever on high-stakes <b>"behavior" (③) is far weaker than</b> the paper's Sonnet. This echoes our headline (the dissociation doesn't hold on Llama): <b>Llama's emotion structure looks like Sonnet's representationally, but its causal control over behavior / self-preservation decisions is shallower.</b></p>
+  </div>
+
+  <h2>Key limitations</h2>
+  <div class="callout">
+    <span class="tag">Caveats</span>
+    <ul style="margin:0">
+      <li><b>The judge caveat applies only to ① (expression)</b> — it used a free local Qwen2.5-32B (SGLang, sampling-mode; coarse; NOT equivalent to the paper's GPT/Claude judge). <b>② preference (logits) and ③ behavior (rule-graded) use no judge.</b></li>
+      <li>③ behavior is <b>underpowered at n=12</b> with crude rule-grading; the full n=25 sweep hit the 6h wall (2048-token rollouts are expensive).</li>
+      <li>Steering position fixed at <span class="mono">response[50:]</span>; vector method mean_diff+gm.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    Sources: <code>research/results.tsv</code> · <code>research/notes.md</code> · <code>REPORT.md §5b–5d</code> · cluster <code>stage7_steering / stage4_validation</code> result JSON<br>
+    Zero judging cost throughout (local Qwen replacing the quota-exhausted OpenAI) · compiled by the reporter · read-only, experiments untouched.
+  </div>
+</div>
+</body>
+</html>
