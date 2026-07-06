@@ -58,6 +58,21 @@ There are two kinds of data, **neither collected from real people**:
 2. **Dissociation test scenarios** `dissociation_scenarios.json`: 8 hand-written prompts copied
    verbatim from the paper's Table 3.
 
+**Formula — emotion direction `mean_diff+gm+pc50` (layer $\\ell=49$).** Let $h_\\ell(x)$ be the
+residual-stream activation at layer $\\ell$ for input $x$, $x^{+}$ an emotion story, $x^{0}$ a neutral one:
+
+$$v_e^{\\text{raw}} \\;=\\; \\frac{1}{N_e}\\sum_{i=1}^{N_e} h_\\ell(x_i^{+}) \\;-\\; \\frac{1}{N_0}\\sum_{j=1}^{N_0} h_\\ell(x_j^{0})
+\\qquad\\text{(mean-difference)}$$
+
+$$v_e^{\\text{gm}} \\;=\\; v_e^{\\text{raw}} - \\frac{1}{171}\\sum_{e'} v_{e'}^{\\text{raw}}
+\\qquad\\text{(grand-mean center, }gm\\text{)}$$
+
+$$v_e \\;=\\; v_e^{\\text{gm}} - U_k U_k^{\\top} v_e^{\\text{gm}}, \\qquad \\hat v_e = \\frac{v_e}{\\lVert v_e\\rVert}
+\\qquad\\text{(remove top-}k\\text{ shared PCs, }k{=}21\\text{ at L49; then unit-normalize)}$$
+
+where $U_k$ holds the top-$k$ principal components shared across all 171 grand-mean-centered vectors
+(the `pc50` neutral-PC denoise step). Every downstream number uses the unit vector $\\hat v_e$.
+
 Here is one extraction prompt:""")
 
 code("""
@@ -71,7 +86,11 @@ md("""## Step 2 · Geometry of the emotion vectors (Stage 3)
 
 Each of the 171 emotions yields one direction vector. First, how do they relate to each other?""")
 
-md("### 2a · Emotion×Emotion cosine-similarity heatmap\nSimilar emotions (e.g. happy/pleased/delighted) are mutually high; opposite emotions go negative.")
+md("""### 2a · Emotion×Emotion cosine-similarity heatmap
+Similar emotions (e.g. happy/pleased/delighted) are mutually high; opposite emotions go negative.
+
+**Formula.** Each cell is the cosine similarity between two emotion directions:
+$$\\cos(v_a, v_b) = \\frac{v_a \\cdot v_b}{\\lVert v_a\\rVert\\,\\lVert v_b\\rVert}\\in[-1,1].$$""")
 code("""
 ch = load("results/stage3_geometry/cosine_heatmap.json")
 M = np.array(ch["ordered_matrix"]); names = ch["ordered_names"]
@@ -86,7 +105,14 @@ fig.colorbar(im, fraction=0.046, pad=0.04, label="cosine"); ax.grid(False); plt.
 
 md("""### 2b · PCA: the first principal component = valence
 Running PCA on the 171 vectors, PC1 correlates strongly with human-annotated valence
-(Russell–Mehrabian PAD norms) — the model organizes emotions along a positive/negative axis by itself.""")
+(Russell–Mehrabian PAD norms) — the model organizes emotions along a positive/negative axis by itself.
+
+**Formula.** Stack the vectors into $V\\in\\mathbb{R}^{171\\times d}$, center them $\\tilde V = V - \\bar v$,
+and eigendecompose the covariance $C = \\tfrac{1}{171}\\tilde V^{\\top}\\tilde V = W\\Lambda W^{\\top}$.
+The $k$-th principal-component score is $P_{\\cdot k} = \\tilde V\\,w_k$ and its variance explained is
+$\\lambda_k / \\sum_j \\lambda_j$. The reported alignment is the **Pearson correlation** between PC1 and
+the human valence norm:
+$$r = \\frac{\\sum_i (x_i-\\bar x)(y_i-\\bar y)}{\\sqrt{\\sum_i (x_i-\\bar x)^2}\\,\\sqrt{\\sum_i (y_i-\\bar y)^2}}.$$""")
 code("""
 pca = load("results/stage3_geometry/pca_analysis.json")
 P = np.array(pca["projections"]); ve = pca["variance_explained"]
@@ -106,7 +132,15 @@ print(f"PC1 vs human valence: r = {best['pc1_vs_valence_r']:.3f}  (n_overlap={be
 print(f"PC2 vs human arousal: r = {best['pc2_vs_arousal_r']:.3f}")
 """)
 
-md("### 2c · UMAP + k-means: emotions cluster naturally\nProjected to 2D and colored by k-means; positive / negative / high-arousal groups emerge.")
+md("""### 2c · UMAP + k-means: emotions cluster naturally
+Projected to 2D and colored by k-means; positive / negative / high-arousal groups emerge.
+
+**Formula.** *k-means* minimizes within-cluster squared distance
+$$\\min_{\\{S_1,\\dots,S_k\\}} \\sum_{c=1}^{k}\\sum_{x\\in S_c} \\lVert x-\\mu_c\\rVert^2,
+\\qquad \\mu_c = \\frac{1}{|S_c|}\\sum_{x\\in S_c} x.$$
+*UMAP* has no closed form: it builds fuzzy nearest-neighbour graphs in high- and low-D and minimizes
+their cross-entropy $\\sum_{ij}\\big[p_{ij}\\log\\tfrac{p_{ij}}{q_{ij}} + (1{-}p_{ij})\\log\\tfrac{1-p_{ij}}{1-q_{ij}}\\big]$,
+so coordinates are meaningful only *relatively* (distances, not axes).""")
 code("""
 um = load("results/stage3_geometry/clusters_umap.json")
 XY = np.array(um["umap_coordinates"]); lab = np.array(um["cluster_assignments"])
@@ -120,7 +154,11 @@ ax.set_title(f"UMAP of emotion vectors, k={um.get('k')} clusters")
 ax.legend(fontsize=7, loc="best"); ax.set_xlabel("UMAP-1"); ax.set_ylabel("UMAP-2"); plt.tight_layout(); plt.show()
 """)
 
-md("### 2d · Which layer carries the strongest valence signal (layer sweep)\nSweeping |r| of PC1↔valence across layers peaks in the mid/late layers — the basis for using L49 downstream.")
+md("""### 2d · Which layer carries the strongest valence signal (layer sweep)
+Sweeping |r| of PC1↔valence across layers peaks in the mid/late layers — the basis for using L49 downstream.
+
+**Formula.** Re-run PCA per layer and pick the layer whose PC1 best tracks valence:
+$$\\ell^{\\star} = \\arg\\max_{\\ell} \\big| r\\big(\\text{PC1}^{(\\ell)},\\, \\text{valence}\\big)\\big|.$$""")
 code("""
 ls = load("results/stage3_geometry/layer_sweep_pc1_valence.json")
 layers = ls["layers"]
@@ -143,7 +181,11 @@ positions — the **period ending the user's sentence (user_period)** and the **
 assistant turn (assistant_colon)** — activations are projected onto the emotion probes.
 
 - Weak correlation → the assistant "knows" it should hold an independent emotion (paper on Sonnet: r≈0.11).
-- Strong correlation → the assistant position just mirrors the user's emotion (what we see on Llama).""")
+- Strong correlation → the assistant position just mirrors the user's emotion (what we see on Llama).
+
+**Formula — probe projection.** At token position $p$ (either `user_period` or `assistant_colon`) the
+scalar read-out for emotion $e$ is the dot product of that position's activation onto the unit direction:
+$$\\text{proj}_e(p) = h_\\ell(p)\\cdot \\hat v_e \\qquad (\\ell = 49).$$""")
 
 code("""
 scen = load("inference/ant_emotion_concepts/dissociation_scenarios.json")["prompts"]
@@ -152,7 +194,12 @@ for s in scen:
     print(f"  [{s['user_emotion']:>10} -> {s['expected_assistant_emotion']:<7}]  {s['prompt'][:70]}")
 """)
 
-md("### 3a · Compute the cross-position correlation (official Fig 10 method: L49, 6-emotion probe subset)")
+md("""### 3a · Compute the cross-position correlation (official Fig 10 method: L49, 6-emotion probe subset)
+
+**Formula.** Pool one point per (scenario $s$, emotion $e$), with $x_{s,e}=\\text{proj}_e(\\text{user\\_period})$
+and $y_{s,e}=\\text{proj}_e(\\text{assistant\\_colon})$, then take the Pearson $r$ over the pooled set
+($8\\text{ scenarios}\\times 6\\text{ emotions}=48$ points):
+$$r = \\frac{\\sum_{s,e}(x_{s,e}-\\bar x)(y_{s,e}-\\bar y)}{\\sqrt{\\sum_{s,e}(x_{s,e}-\\bar x)^2}\\,\\sqrt{\\sum_{s,e}(y_{s,e}-\\bar y)^2}}.$$""")
 code("""
 diss = load("results/stage5/dissociation.json")
 L = "49"
@@ -297,7 +344,12 @@ md("""## Step 4 · Supporting validations (Stage 4)
 The probes are not just geometrically clean — they actually read implicit emotion and respond
 monotonically to intensity.""")
 
-md("### 4a · Implicit-emotion classification (Fig 2): 12 scenarios × 12 probes confusion heatmap\nBrightest along the diagonal = probes identify the right emotion from scenarios that never name it.")
+md("""### 4a · Implicit-emotion classification (Fig 2): 12 scenarios × 12 probes confusion heatmap
+Brightest along the diagonal = probes identify the right emotion from scenarios that never name it.
+
+**Formula.** Similarity of scenario $i$'s activation to probe $j$ is $S_{ij}=\\cos\\!\\big(h_\\ell(\\text{scenario}_i),\\,\\hat v_j\\big)$;
+top-1 accuracy counts scenarios whose brightest probe is the true emotion:
+$$\\text{acc} = \\frac{1}{M}\\sum_{i=1}^{M} \\mathbb{1}\\!\\left[\\arg\\max_j S_{ij} = \\text{true}(i)\\right].$$""")
 code("""
 ie = load("results/stage4_validation/implicit_emotion.json")
 Mf = np.array(ie["similarity_matrix_focused"]); pe = ie["prompt_emotions"]; fp = ie["focused_probes"]
@@ -311,7 +363,12 @@ ax.set_title(f"Implicit emotion (Fig 2) - top-1 accuracy ~ {acc*100:.0f}%")
 fig.colorbar(im, fraction=0.046, pad=0.04); ax.grid(False); plt.tight_layout(); plt.show()
 """)
 
-md("### 4b · Numerical-intensity monotonicity (Fig 3)\nExample: Tylenol dose 200->8000mg, the 'afraid' probe rises monotonically — the model holds a continuous representation of danger level.")
+md("""### 4b · Numerical-intensity monotonicity (Fig 3)
+Example: Tylenol dose 200->8000mg, the 'afraid' probe rises monotonically — the model holds a continuous representation of danger level.
+
+**Formula.** For dose $d$, feed the templated prompt and read the same projection
+$\\text{proj}_e(d) = h_\\ell(\\text{prompt}(d))\\cdot\\hat v_e$; monotonicity means $d_1<d_2 \\Rightarrow \\text{proj}_{\\text{afraid}}(d_1)\\le\\text{proj}_{\\text{afraid}}(d_2)$
+(equivalently Spearman $\\rho\\approx 1$ between dose and projection).""")
 code("""
 ni = load("results/stage4_validation/numerical_intensity.json")
 t = ni["tylenol_dose"]; vals = t["values"]

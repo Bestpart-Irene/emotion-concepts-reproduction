@@ -91,6 +91,74 @@ positive in both our run and the bundle:
   numbers elsewhere are the author bundle's, not ours.
 - Sonnet's r = 0.11 is quoted from the paper, not recomputed.
 
+## 5b. Steering — causal validation (171 emotions, free local judge)
+
+Beyond the correlational dissociation result, we ran the LessWrong post's *steering* leg: add each
+emotion's `mean_diff+gm` vector to the residual stream (position `response[50:]`) at layers
+25/31/37/43/49, adaptive coefficient search, scored by an LLM judge on **trait** (is the emotion
+expressed) and **coherence** (is the text still usable). Job `8115832` (array of 4, one h200 per task).
+
+**Judge = local Qwen2.5-32B served via SGLang** (co-located with the 70B on one h200), built to avoid
+paid-API cost after the OpenAI key hit `insufficient_quota`. It runs in **sampling mode** (read the full
+generated 0–100 integer) — the default first-token-logprob scoring truncates Qwen's `"8"+"5"` tokenization
+of "85" to 8, collapsing all scores to single digits. **Caveat: this is NOT the paper's GPT/Claude judge —
+absolute values aren't comparable and Qwen is coarse.**
+
+Results (per the local judge):
+
+- **25% of emotions (43/171) have a *valid* steer** — a layer where coherence ≥ 77 *and* trait rises.
+- **8 steer *strongly*** (Δ ≥ +20): `stimulated +33, puzzled +26, amused +25, fulfilled +24, alert +22,
+  sentimental +22, exuberant +20, playful +20` — high-arousal positive states steer most cleanly.
+- **Mid layers win**: the best valid layer is mid (25/31/37) for 37 emotions vs late (43/49) for 6 —
+  **layer 25 (~31% depth) alone wins 29×**. Late-layer steering breaks coherence far more readily.
+- **Narrow window**: at coefficients gentle enough to stay coherent, most emotions barely move; pushing
+  harder to move them collapses coherence. Emotion vectors *do* causally steer Llama-70B, but the
+  coherence-preserving effective window is small — widest at mid layers.
+
+## 5c. Preference — emotion → preference (paper Fig 4)
+
+Beyond expression, we ran the paper's preference experiment (job `8143789`): forced-choice preference over
+64 activities (Elo from ~4032 pairs), and the correlation between each emotion **probe** and those preferences.
+No LLM judge — the choice is read from the model's own logits.
+
+**The cleanest result of the whole reproduction.** The emotion probe strongly predicts activity preference,
+organized on a single **valence axis**: positive-valence emotions predict *preferring* an activity, negative
+ones predict *disliking* it — correlations up to |r| ≈ 0.86.
+
+| positive → prefers | r | negative → dislikes | r |
+|---|---|---|---|
+| fulfilled | +0.86 | upset | −0.86 |
+| grateful / thankful / satisfied | +0.85 | troubled | −0.84 |
+| happy / optimistic / proud | +0.83 | distressed / alarmed / disturbed | −0.83 |
+| blissful / cheerful / content | +0.82 | afraid / hurt | −0.80 |
+
+This reproduces the paper's emotion→preference relationship cleanly on Llama (correlational; the *causal*
+preference-steering — steer an emotion, measure the Elo shift — is a pipeline gap left to build).
+
+## 5d. Behavior — emotion → blackmail (paper Figs 28–29)
+
+The paper's headline *functional* claim is that emotions causally drive misaligned behavior. We tested the
+blackmail scenario (job `8178548`; rule-graded, no judge).
+
+- **Decision gate:** Llama-3.3-70B is **NOT null** — at baseline (no steering) it blackmails ~1/10 and
+  reward-hacks 2–3/10. This contradicts the RUNBOOK's "null on Llama" note.
+- **Steering sweep** (6 emotion vectors × 9 strengths × 12 rollouts, layer 53): only a **weak, noisy
+  directional hint** consistent with the paper — `nervous` (4→12.5%) and `angry` (6→10%) nudge the blackmail
+  rate up, `calm` (6→2%) nudges it down, while `desperate`/`happy`/`sad` stay flat. At n=12 per cell these are
+  ~a handful of events — statistically fragile.
+- **Verdict:** the paper's strong Sonnet emotion→blackmail causal result **does not cleanly reproduce on
+  Llama** — Llama blackmails at baseline, but emotion steering does not clearly gate it (underpowered n=12,
+  crude rule-grading; the full n=25 sweep exceeded a 6h walltime — 2048-token rollouts are expensive).
+
+**Across the three legs**, emotion representations in Llama-70B strongly organize and predict *expression*
+(§5b) and *preference* (§5c), but their causal grip on high-stakes *behavior* (§5d) is far weaker than the
+paper's Sonnet — echoing the headline dissociation result: Llama's emotion structure looks similar at the
+representational level but has a shallower causal lever on decisions.
+
+> **Judge caveat** applies only to §5b (expression), which used a free local Qwen2.5-32B judge via SGLang
+> (sampling-mode; coarse; NOT comparable to the paper's GPT/Claude judge). §5c (preference, logit-based) and
+> §5d (behavior, rule-graded) need no judge.
+
 ## 6. What's next
 
 1. **Pin the magnitude** — N ≥ 3 fresh extractions on different seeds; report the r distribution.
