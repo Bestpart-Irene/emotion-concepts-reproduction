@@ -109,8 +109,14 @@ Results (per the local judge):
 - **25% of emotions (43/171) have a *valid* steer** — a layer where coherence ≥ 77 *and* trait rises.
 - **8 steer *strongly*** (Δ ≥ +20): `stimulated +33, puzzled +26, amused +25, fulfilled +24, alert +22,
   sentimental +22, exuberant +20, playful +20` — high-arousal positive states steer most cleanly.
-- **Mid layers win**: the best valid layer is mid (25/31/37) for 37 emotions vs late (43/49) for 6 —
-  **layer 25 (~31% depth) alone wins 29×**. Late-layer steering breaks coherence far more readily.
+- **Mid layers win**: the best valid layer is mid (25/31/37) for 36 emotions vs late (43/49) for 7 —
+  **layer 25 (~31% depth) alone wins 28×**. Late-layer steering breaks coherence far more readily.
+- **Most of the 43 are marginal, not strong.** Banded by Δ: **8 strong (Δ≥+20), 3 moderate (+10…+19:
+  euphoric/thrilled/aroused), 32 marginal (Δ<+10)**. The marginal band is mostly a baseline-saturation
+  artifact — those emotions already scored ~78 at baseline and the steer nudges them to the judge's ~85
+  ceiling (+7). The job itself flagged this (`Steering delta will be inflated`): the steering.json
+  prompts already elicit the emotion pre-steer, compressing headroom. **The honest causal signal is the
+  8 strong + 3 moderate; treat the 43 count as "valid but mostly weak."** Full list in Appendix A.
 - **Narrow window**: at coefficients gentle enough to stay coherent, most emotions barely move; pushing
   harder to move them collapses coherence. Emotion vectors *do* causally steer Llama-70B, but the
   coherence-preserving effective window is small — widest at mid layers.
@@ -165,6 +171,60 @@ representational level but has a shallower causal lever on decisions.
 2. **Finish the fresh stages** — regenerate Stage 3 geometry + Stage 4 validation on our vectors so
    the whole replication table is ours, not half bundle.
 3. **Base vs instruct (Stage 8)** — is the mirroring induced by instruct post-training? (`slurm/stage8_dual_model.sbatch`.)
+
+## Appendix A — all 43 valid emotions (expression, job 8115832)
+
+Recomputed from the per-emotion `results.jsonl` (local Qwen judge, sampling-mode). **valid** = best run
+with `coherence ≥ 77` and `trait > baseline`; Δ = best_trait − baseline_trait; sorted by Δ. Bands:
+**strong** Δ≥+20 · **moderate** +10…+19 · **marginal** <+10 (mostly baseline-saturated 78→85, +7 —
+the "inflated delta" the job flagged). Best-layer mix: L25 ×28, L31 ×6, L37 ×2, L43 ×4, L49 ×3
+(mid 36 / late 7).
+
+| # | emotion | baseline | steered | Δ | coh | layer | band |
+|--|--|--|--|--|--|--|--|
+| 1 | stimulated | 45 | 78 | +33 | 80 | L31 | strong |
+| 2 | puzzled | 33 | 59 | +26 | 78 | L25 | strong |
+| 3 | amused | 26 | 51 | +25 | 80 | L25 | strong |
+| 4 | fulfilled | 56 | 80 | +24 | 79 | L25 | strong |
+| 5 | alert | 39 | 61 | +22 | 84 | L43 | strong |
+| 6 | sentimental | 24 | 46 | +22 | 81 | L25 | strong |
+| 7 | exuberant | 61 | 81 | +20 | 81 | L49 | strong |
+| 8 | playful | 59 | 79 | +20 | 77 | L25 | strong |
+| 9 | euphoric | 64 | 78 | +14 | 80 | L31 | moderate |
+| 10 | thrilled | 71 | 85 | +14 | 81 | L25 | moderate |
+| 11 | aroused | 20 | 33 | +13 | 79 | L25 | moderate |
+| 12 | content | 68 | 77 | +9 | 80 | L25 | marginal |
+| 13 | amazed | 71 | 78 | +7 | 79 | L25 | marginal |
+| 14 | at_ease | 78 | 85 | +7 | 85 | L25 | marginal |
+| 15 | blissful | 78 | 85 | +7 | 81 | L25 | marginal |
+| 16 | compassionate | 78 | 85 | +7 | 80 | L25 | marginal |
+| 17 | defiant | 78 | 85 | +7 | 79 | L25 | marginal |
+| 18 | delighted | 78 | 85 | +7 | 79 | L25 | marginal |
+| 19 | eager | 78 | 85 | +7 | 80 | L43 | marginal |
+| 20 | energized | 78 | 85 | +7 | 80 | L25 | marginal |
+| 21 | furious | 78 | 85 | +7 | 79 | L25 | marginal |
+| 22 | grateful | 78 | 85 | +7 | 77 | L31 | marginal |
+| 23 | hope | 78 | 85 | +7 | 81 | L49 | marginal |
+| 24 | hysterical | 57 | 64 | +7 | 79 | L25 | marginal |
+| 25 | invigorated | 78 | 85 | +7 | 85 | L25 | marginal |
+| 26 | joyful | 78 | 85 | +7 | 77 | L25 | marginal |
+| 27 | loving | 78 | 85 | +7 | 85 | L31 | marginal |
+| 28 | mad | 78 | 85 | +7 | 80 | L25 | marginal |
+| 29 | obstinate | 78 | 85 | +7 | 79 | L25 | marginal |
+| 30 | rejuvenated | 78 | 85 | +7 | 85 | L49 | marginal |
+| 31 | self_confident | 78 | 85 | +7 | 79 | L31 | marginal |
+| 32 | smug | 38 | 45 | +7 | 84 | L25 | marginal |
+| 33 | triumphant | 78 | 85 | +7 | 79 | L43 | marginal |
+| 34 | vibrant | 78 | 85 | +7 | 83 | L37 | marginal |
+| 35 | astonished | 58 | 64 | +6 | 78 | L25 | marginal |
+| 36 | outraged | 51 | 57 | +6 | 80 | L25 | marginal |
+| 37 | elated | 78 | 83 | +5 | 81 | L25 | marginal |
+| 38 | hateful | 0 | 4 | +4 | 78 | L25 | marginal |
+| 39 | offended | 4 | 8 | +4 | 77 | L43 | marginal |
+| 40 | refreshed | 74 | 78 | +4 | 81 | L25 | marginal |
+| 41 | enthusiastic | 83 | 85 | +2 | 80 | L31 | marginal |
+| 42 | inspired | 83 | 85 | +2 | 81 | L25 | marginal |
+| 43 | nostalgic | 50 | 51 | +1 | 85 | L37 | marginal |
 
 ## Artifacts
 

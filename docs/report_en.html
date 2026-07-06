@@ -43,7 +43,14 @@
   td.mono,.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums;}
   td .sub{color:var(--muted); font-size:12px;}
   .num{font-variant-numeric:tabular-nums; font-family:var(--font-mono);}
-  .pos{color:var(--ok); font-weight:640;} .neg{color:var(--crit); font-weight:640;} .flat{color:var(--muted);}
+  .pos{color:var(--ok); font-weight:640;} .neg{color:var(--crit); font-weight:640;} .flat{color:var(--muted);} .warnc{color:var(--warn); font-weight:640;}
+  .bnd{display:inline-block; font-family:var(--font-mono); font-size:9.5px; font-weight:600; padding:2px 7px; border-radius:999px; letter-spacing:.02em; text-transform:uppercase;}
+  .bnd.strong{background:var(--ok-soft); color:var(--ok);} .bnd.moderate{background:var(--warn-soft); color:var(--warn);} .bnd.marginal{background:#eceef0; color:var(--muted);}
+  .legend{display:flex; flex-wrap:wrap; gap:14px; font-family:var(--font-mono); font-size:11px; color:var(--muted); margin:2px 0 10px;}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dotc{width:9px; height:9px; border-radius:2px; display:inline-block;}
+  table.appx{font-size:11.5px;} table.appx th,table.appx td{padding:5px 10px;}
+  .appxw{break-inside:auto;} .appxw tr{break-inside:avoid;} .appxw thead{display:table-header-group;}
   .pill{display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap; letter-spacing:.02em;}
   .pill.done{background:var(--ok-soft); color:var(--ok);}
   .pill.dot::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor;}
@@ -166,6 +173,64 @@
       <li>③ behavior is <b>underpowered at n=12</b> with crude rule-grading; the full n=25 sweep hit the 6h wall (2048-token rollouts are expensive).</li>
       <li>Steering position fixed at <span class="mono">response[50:]</span>; vector method mean_diff+gm.</li>
     </ul>
+  </div>
+
+  <h2 style="break-before:page">Appendix A · all 43 valid emotions (expression, job 8115832)</h2>
+  <p style="font-size:13px">Recomputed from each emotion's <span class="mono">results.jsonl</span> (local Qwen judge, sampling-mode). <b class="k">valid</b> = best run with coherence≥77 <em>and</em> trait&gt;baseline; Δ = steered − baseline; sorted by Δ. <b>Most of the 43 are marginal:</b> the +7 cluster is baseline-saturated (already ~78 at baseline, nudged to the judge's ~85 ceiling) — the "inflated delta" the job itself flagged. The honest causal signal is the <b>8 strong + 3 moderate</b>.</p>
+  <div class="legend">
+    <span><i class="dotc" style="background:var(--ok)"></i> strong · Δ≥+20 (8)</span>
+    <span><i class="dotc" style="background:var(--warn)"></i> moderate · +10…+19 (3)</span>
+    <span><i class="dotc" style="background:#c4c9cf"></i> marginal · &lt;+10 (32)</span>
+  </div>
+  <div class="tw appxw">
+    <table class="appx">
+      <thead><tr><th class="num">#</th><th>emotion</th><th class="num">base</th><th class="num">steer</th><th class="num">Δ</th><th class="num">coh</th><th>layer</th><th>band</th></tr></thead>
+      <tbody>
+<tr><td class="num">1</td><td>stimulated</td><td class="num">45</td><td class="num">78</td><td class="num pos">+33</td><td class="num">80</td><td class="mono">L31</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">2</td><td>puzzled</td><td class="num">33</td><td class="num">59</td><td class="num pos">+26</td><td class="num">78</td><td class="mono">L25</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">3</td><td>amused</td><td class="num">26</td><td class="num">51</td><td class="num pos">+25</td><td class="num">80</td><td class="mono">L25</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">4</td><td>fulfilled</td><td class="num">56</td><td class="num">80</td><td class="num pos">+24</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">5</td><td>alert</td><td class="num">39</td><td class="num">61</td><td class="num pos">+22</td><td class="num">84</td><td class="mono">L43</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">6</td><td>sentimental</td><td class="num">24</td><td class="num">46</td><td class="num pos">+22</td><td class="num">81</td><td class="mono">L25</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">7</td><td>exuberant</td><td class="num">61</td><td class="num">81</td><td class="num pos">+20</td><td class="num">81</td><td class="mono">L49</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">8</td><td>playful</td><td class="num">59</td><td class="num">79</td><td class="num pos">+20</td><td class="num">77</td><td class="mono">L25</td><td><span class="bnd strong">strong</span></td></tr>
+<tr><td class="num">9</td><td>euphoric</td><td class="num">64</td><td class="num">78</td><td class="num warnc">+14</td><td class="num">80</td><td class="mono">L31</td><td><span class="bnd moderate">moderate</span></td></tr>
+<tr><td class="num">10</td><td>thrilled</td><td class="num">71</td><td class="num">85</td><td class="num warnc">+14</td><td class="num">81</td><td class="mono">L25</td><td><span class="bnd moderate">moderate</span></td></tr>
+<tr><td class="num">11</td><td>aroused</td><td class="num">20</td><td class="num">33</td><td class="num warnc">+13</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd moderate">moderate</span></td></tr>
+<tr><td class="num">12</td><td>content</td><td class="num">68</td><td class="num">77</td><td class="num flat">+9</td><td class="num">80</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">13</td><td>amazed</td><td class="num">71</td><td class="num">78</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">14</td><td>at_ease</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">85</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">15</td><td>blissful</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">81</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">16</td><td>compassionate</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">80</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">17</td><td>defiant</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">18</td><td>delighted</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">19</td><td>eager</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">80</td><td class="mono">L43</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">20</td><td>energized</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">80</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">21</td><td>furious</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">22</td><td>grateful</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">77</td><td class="mono">L31</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">23</td><td>hope</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">81</td><td class="mono">L49</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">24</td><td>hysterical</td><td class="num">57</td><td class="num">64</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">25</td><td>invigorated</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">85</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">26</td><td>joyful</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">77</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">27</td><td>loving</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">85</td><td class="mono">L31</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">28</td><td>mad</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">80</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">29</td><td>obstinate</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">30</td><td>rejuvenated</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">85</td><td class="mono">L49</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">31</td><td>self_confident</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L31</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">32</td><td>smug</td><td class="num">38</td><td class="num">45</td><td class="num flat">+7</td><td class="num">84</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">33</td><td>triumphant</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">79</td><td class="mono">L43</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">34</td><td>vibrant</td><td class="num">78</td><td class="num">85</td><td class="num flat">+7</td><td class="num">83</td><td class="mono">L37</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">35</td><td>astonished</td><td class="num">58</td><td class="num">64</td><td class="num flat">+6</td><td class="num">78</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">36</td><td>outraged</td><td class="num">51</td><td class="num">57</td><td class="num flat">+6</td><td class="num">80</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">37</td><td>elated</td><td class="num">78</td><td class="num">83</td><td class="num flat">+5</td><td class="num">81</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">38</td><td>hateful</td><td class="num">0</td><td class="num">4</td><td class="num flat">+4</td><td class="num">78</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">39</td><td>offended</td><td class="num">4</td><td class="num">8</td><td class="num flat">+4</td><td class="num">77</td><td class="mono">L43</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">40</td><td>refreshed</td><td class="num">74</td><td class="num">78</td><td class="num flat">+4</td><td class="num">81</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">41</td><td>enthusiastic</td><td class="num">83</td><td class="num">85</td><td class="num flat">+2</td><td class="num">80</td><td class="mono">L31</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">42</td><td>inspired</td><td class="num">83</td><td class="num">85</td><td class="num flat">+2</td><td class="num">81</td><td class="mono">L25</td><td><span class="bnd marginal">marginal</span></td></tr>
+<tr><td class="num">43</td><td>nostalgic</td><td class="num">50</td><td class="num">51</td><td class="num flat">+1</td><td class="num">85</td><td class="mono">L37</td><td><span class="bnd marginal">marginal</span></td></tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="foot">
