@@ -165,6 +165,32 @@ representational level but has a shallower causal lever on decisions.
 > (sampling-mode; coarse; NOT comparable to the paper's GPT/Claude judge). §5c (preference, logit-based) and
 > §5d (behavior, rule-graded) need no judge.
 
+## 5e. Validation — negative control revises the expression leg (jobs 8205955, 8206141)
+
+We ran the three validations flagged as gaps. **The expression leg (§5b) does not cleanly survive**; the
+other two legs are unaffected (no judge, no steering perturbation).
+
+- **#1 matched-norm random-vector control (the key test).** Steer each of the 11 claimed emotions with its
+  real `mean_diff+gm` vector vs a **coordinate-permuted copy** (identical norm, direction destroyed), same
+  prompts, same judge. Result: at the strict coherence≥77 gate a **random vector passes MORE often (10/11)
+  than the real vector (5/11)** — the "valid steer" metric is confounded by generic residual-stream
+  perturbation the coarse judge misreads as emotion. Only **4/11 (playful, fulfilled, stimulated, euphoric)**
+  show the real vector clearly beating random (soft-lift margin ≥ +8); for **4/11 (alert, amused, aroused,
+  thrilled) a random direction matches or beats it**. Notably `amused` — an original "strong-8" — fails.
+- **#2 baseline saturation — confirmed.** Re-running with dry emotion-neutral prompts drops the baseline
+  from **~78 → mean 48.7** (min 13). The original "43/171 valid" was substantially inflated by eval prompts
+  that already elicited the emotion at baseline (the `Steering delta will be inflated` warning was right).
+- **#5 norm-matched steering — broke coherence.** `--norm-match` under the standard coefficient search
+  collapsed coherence to **0–10** (trait 0–10); residual-norm-scaled injection is far too strong and needs a
+  separately-tuned, much gentler schedule — not a drop-in fix.
+
+**Revised verdict on §5b:** the genuine, direction-specific expression-steering signal is **~4 high-arousal
+positive emotions, not 43**. Much of the original count is perturbation + baseline saturation + a coarse
+judge. This *narrows* the expression leg; it does **not** touch the headline dissociation result (§3), the
+preference leg (§5c, r≈0.86, logit-based), or the behavior leg (§5d, rule-graded). Full validation report:
+`docs/steering_validation_EN.pdf`. (Method: permuted vectors as a norm-matched random control; separate
+prompt_sets per condition to avoid `--force` truncating `results.jsonl`.)
+
 ## 6. What's next
 
 1. **Pin the magnitude** — N ≥ 3 fresh extractions on different seeds; report the r distribution.
