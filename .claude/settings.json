@@ -4,5 +4,17 @@
       "Edit(notebook/data/**)",
       "Write(notebook/data/**)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/Emotion Concepts/.claude/hooks/session_state.sh\""
+          }
+        ]
+      }
+    ]
   }
 }
