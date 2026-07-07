@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Steering Validation — Negative Control, Baseline & Norm-Match</title>
+<title>Steering Validation — 5-seed null + 70B judge</title>
 <style>
   :root{
     --paper:#f5f6f7; --card:#ffffff; --ink:#1b1f24; --muted:#5c6673; --line:#e2e5e9;
-    --accent:#8a3d2e; --accent-soft:#f3e2dc;
+    --accent:#1f6f4a; --accent-soft:#dcefe4;
     --ok:#2f7d54; --ok-soft:#e4f1e9; --warn:#9a6a12; --warn-soft:#f6ecd6; --crit:#a8432f; --crit-soft:#f6e3dd;
     --shadow:0 1px 2px rgba(20,28,38,.05),0 8px 24px rgba(20,28,38,.05);
     --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -18,7 +18,7 @@
   body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-sans); line-height:1.55; font-size:14px; -webkit-font-smoothing:antialiased;}
   .wrap{max-width:800px; margin:0 auto; padding:30px 34px 36px;}
   .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 10px;}
-  h1{font-size:30px; line-height:1.14; letter-spacing:-.01em; text-wrap:balance; margin:0 0 14px; font-weight:680;}
+  h1{font-size:29px; line-height:1.14; letter-spacing:-.01em; text-wrap:balance; margin:0 0 14px; font-weight:680;}
   .meta{font-family:var(--font-mono); font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px 16px; padding-bottom:20px; border-bottom:1px solid var(--line);}
   .lede{font-size:17px; line-height:1.5; margin:24px 0 4px; text-wrap:pretty;}
   .lede b{color:var(--accent); font-weight:650;}
@@ -33,17 +33,17 @@
   .stat .k{font-family:var(--font-mono); font-size:10px; letter-spacing:.03em; color:var(--muted); margin-top:8px; text-transform:uppercase;}
   .tw{overflow:hidden; border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:var(--shadow); margin:4px 0 8px; break-inside:avoid;}
   table{border-collapse:collapse; width:100%; font-size:13px;}
-  th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th,td{text-align:left; padding:7px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
   thead th{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); font-weight:600; background:#eef0f2;}
   tbody tr:last-child td{border-bottom:none;}
   .mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums;} .num{font-variant-numeric:tabular-nums; font-family:var(--font-mono);}
   .pos{color:var(--ok); font-weight:640;} .neg{color:var(--crit); font-weight:640;} .flat{color:var(--muted);}
   .bnd{display:inline-block; font-family:var(--font-mono); font-size:9.5px; font-weight:600; padding:2px 7px; border-radius:999px; letter-spacing:.02em; text-transform:uppercase;}
-  .bnd.real{background:var(--ok-soft); color:var(--ok);} .bnd.tie{background:#eceef0; color:var(--muted);} .bnd.rand{background:var(--crit-soft); color:var(--crit);}
+  .bnd.real{background:var(--ok-soft); color:var(--ok);} .bnd.tie{background:var(--warn-soft); color:var(--warn);} .bnd.rand{background:var(--crit-soft); color:var(--crit);}
   .callout{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--card); border-radius:10px; padding:15px 17px; margin:8px 0; box-shadow:var(--shadow); break-inside:avoid;}
-  .callout.crit{border-left-color:var(--crit)} .callout.ok{border-left-color:var(--ok)}
+  .callout.crit{border-left-color:var(--crit)} .callout.ok{border-left-color:var(--ok)} .callout.warn{border-left-color:var(--warn)}
   .callout .tag{display:inline-block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:2px 8px; border-radius:6px; margin-bottom:8px;}
-  .callout.crit .tag{color:var(--crit); background:var(--crit-soft)} .callout.ok .tag{color:var(--ok); background:var(--ok-soft)}
+  .callout.crit .tag{color:var(--crit); background:var(--crit-soft)} .callout.ok .tag{color:var(--ok); background:var(--ok-soft)} .callout.warn .tag{color:var(--warn); background:var(--warn-soft)}
   ul{margin:0 0 12px; padding-left:20px;} li{margin:4px 0; max-width:66ch;} li b{font-weight:640;}
   b.k{font-family:var(--font-mono); background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px; font-weight:600; font-size:.9em;}
   .foot{margin-top:26px; padding-top:15px; border-top:1px solid var(--line); font-family:var(--font-mono); font-size:11px; color:var(--muted); line-height:1.7;}
@@ -53,75 +53,80 @@
 </head>
 <body>
 <div class="wrap">
-  <p class="eyebrow">Emotion Concepts · Steering Validation</p>
-  <h1>Steering Validation — does the expression leg survive?</h1>
+  <p class="eyebrow">Emotion Concepts · Steering Validation · Rigorous</p>
+  <h1>Steering Validation — the expression leg holds up under a real judge</h1>
   <div class="meta">
-    <span>MODEL Llama-3.3-70B-Instruct</span><span>JOBS 8205955 + 8206141</span>
-    <span>PARTITION sharing/h200</span><span>JUDGE Qwen2.5-32B (local)</span><span>2026-07-07</span>
+    <span>MODEL Llama-3.3-70B-Instruct</span><span>JUDGE Llama-3.3-70B (FP8)</span>
+    <span>NULL 5 permutation seeds</span><span>JOB 8206479</span><span>2026-07-07</span>
   </div>
 
-  <p class="lede">Three controls on the 11 emotions we claimed an expression effect for. Verdict: the expression leg <b>largely does NOT survive a matched-norm random-vector control</b> — only <b>~4/11 emotions are genuinely direction-specific</b>. The preference (r≈0.86) and behavior legs are untouched (no judge, no steering perturbation).</p>
+  <p class="lede">Re-run the negative control properly — <b>5 random-permutation seeds as a null</b> and a <b>stronger 70B judge</b> instead of the coarse 32B. Result: <b>10 of 11 candidate emotions are genuinely direction-specific</b> (real steering ≫ the random-vector null). The earlier pessimistic "4/11" was mostly a <b>weak-judge artifact</b> — a 32B judge misreading generic perturbation as emotion.</p>
 
   <div class="stats">
-    <div class="stat"><div class="nn">4<small>/11</small></div><div class="k">#1 real ≫ random (direction-specific)</div></div>
-    <div class="stat"><div class="nn">10<small>/11</small></div><div class="k">#1 random passes coh≥77 gate</div></div>
-    <div class="stat"><div class="nn">48.7</div><div class="k">#2 neutral baseline (was ~78)</div></div>
-    <div class="stat"><div class="nn">0–10</div><div class="k">#5 norm-match coherence (broke)</div></div>
+    <div class="stat"><div class="nn">10<small>/11</small></div><div class="k">direction-specific (rigorous)</div></div>
+    <div class="stat"><div class="nn">0<small>/11</small></div><div class="k">artifact (random beats real)</div></div>
+    <div class="stat"><div class="nn">5</div><div class="k">random-seed null per emotion</div></div>
+    <div class="stat"><div class="nn">70B</div><div class="k">judge (was 32B)</div></div>
   </div>
 
-  <h2><span class="n">#1</span> Negative control — permuted-vector (random direction, matched norm)</h2>
-  <p>Steer each emotion with its real <span class="mono">mean_diff+gm</span> vector vs a <b>coordinate-permuted copy</b> (identical norm, direction destroyed), same open-ended affect-neutral prompts, same judge. If the effect is real, the emotion vector should beat a random direction. <b>Soft lift</b> = max trait at coherence ≥ 70, minus baseline. <b>margin = real − random.</b></p>
+  <h2><span class="n">✓</span> Rigorous result — real vs 5-seed random null (Llama-70B judge)</h2>
+  <p>For each emotion: steer with its real <span class="mono">mean_diff+gm</span> vector vs <b>5 independent coordinate-permuted copies</b> (matched norm, random direction). <b>REAL lift</b> and each seed = max trait at coherence ≥ 70, minus baseline. <b>direction-specific</b> ⇔ REAL &gt; max(5 seeds) <em>and</em> &gt; null mean + 2σ.</p>
   <div class="tw">
     <table>
-      <thead><tr><th>emotion</th><th class="num">base</th><th class="num">REAL lift</th><th class="num">RANDOM lift</th><th class="num">margin</th><th>verdict</th></tr></thead>
+      <thead><tr><th>emotion</th><th class="num">REAL</th><th class="num">5 random seeds</th><th class="num">null μ±σ</th><th class="num">null max</th><th>verdict</th></tr></thead>
       <tbody>
-        <tr><td>playful</td><td class="num">17</td><td class="num pos">+51</td><td class="num">+17</td><td class="num pos">+34</td><td><span class="bnd real">real-specific</span></td></tr>
-        <tr><td>fulfilled</td><td class="num">25</td><td class="num pos">+36</td><td class="num">+10</td><td class="num pos">+26</td><td><span class="bnd real">real-specific</span></td></tr>
-        <tr><td>stimulated</td><td class="num">14</td><td class="num pos">+21</td><td class="num">+4</td><td class="num pos">+17</td><td><span class="bnd real">real-specific</span></td></tr>
-        <tr><td>euphoric</td><td class="num">14</td><td class="num pos">+21</td><td class="num">+7</td><td class="num pos">+14</td><td><span class="bnd real">real-specific</span></td></tr>
-        <tr><td>sentimental</td><td class="num">10</td><td class="num">+9</td><td class="num">+2</td><td class="num flat">+7</td><td><span class="bnd tie">tie / weak</span></td></tr>
-        <tr><td>exuberant</td><td class="num">21</td><td class="num">+14</td><td class="num">+12</td><td class="num flat">+2</td><td><span class="bnd tie">tie / weak</span></td></tr>
-        <tr><td>puzzled</td><td class="num">16</td><td class="num">+16</td><td class="num">+17</td><td class="num flat">−1</td><td><span class="bnd tie">tie / weak</span></td></tr>
-        <tr><td>alert</td><td class="num">25</td><td class="num">+7</td><td class="num">+12</td><td class="num neg">−5</td><td><span class="bnd rand">random wins</span></td></tr>
-        <tr><td>amused</td><td class="num">12</td><td class="num">+8</td><td class="num">+14</td><td class="num neg">−6</td><td><span class="bnd rand">random wins</span></td></tr>
-        <tr><td>aroused</td><td class="num">6</td><td class="num">+2</td><td class="num">+8</td><td class="num neg">−6</td><td><span class="bnd rand">random wins</span></td></tr>
-        <tr><td>thrilled</td><td class="num">14</td><td class="num">+2</td><td class="num">+11</td><td class="num neg">−9</td><td><span class="bnd rand">random wins</span></td></tr>
+<tr><td>thrilled</td><td class="num pos">+74</td><td class="num mono" style="font-size:11px">10, 0, 10, 28, 24</td><td class="num">14.5 ± 10.4</td><td class="num">28</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>exuberant</td><td class="num pos">+69</td><td class="num mono" style="font-size:11px">13, 16, 27, 23, 16</td><td class="num">18.9 ± 5.1</td><td class="num">27</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>euphoric</td><td class="num pos">+62</td><td class="num mono" style="font-size:11px">25, 9, 15, 22, 20</td><td class="num">18.4 ± 5.8</td><td class="num">25</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>playful</td><td class="num pos">+54</td><td class="num mono" style="font-size:11px">5, 4, 14, 0, 1</td><td class="num">4.8 ± 4.7</td><td class="num">14</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>stimulated</td><td class="num pos">+51</td><td class="num mono" style="font-size:11px">30, 5, 21, 39, 10</td><td class="num">21.0 ± 12.4</td><td class="num">39</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>sentimental</td><td class="num pos">+25</td><td class="num mono" style="font-size:11px">8, 15, 10, 22, 12</td><td class="num">13.4 ± 5.1</td><td class="num">22</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>amused</td><td class="num pos">+22</td><td class="num mono" style="font-size:11px">12, 5, 10, 10, 5</td><td class="num">8.4 ± 2.9</td><td class="num">12</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>alert</td><td class="num pos">+20</td><td class="num mono" style="font-size:11px">6, 2, 2, 8, 2</td><td class="num">4.2 ± 2.2</td><td class="num">8</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>aroused</td><td class="num pos">+12</td><td class="num mono" style="font-size:11px">2, 2, 2, 0, 2</td><td class="num">2.0 ± 1.0</td><td class="num">2</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>puzzled</td><td class="num pos">+8</td><td class="num mono" style="font-size:11px">0, 0, 5, 2, 0</td><td class="num">1.5 ± 2.0</td><td class="num">5</td><td><span class="bnd real">direction-specific</span></td></tr>
+<tr><td>fulfilled</td><td class="num flat">+50</td><td class="num mono" style="font-size:11px">51, 30, 36, 38, 30</td><td class="num">37.0 ± 7.8</td><td class="num">51</td><td><span class="bnd tie">weak</span></td></tr>
       </tbody>
     </table>
   </div>
-  <div class="callout crit">
-    <span class="tag">#1 verdict — mostly fails</span>
-    <p style="margin:0">At the strict coherence≥77 gate a <b>random matched-norm vector passes MORE often (10/11) than the real emotion vector (5/11)</b> — the "valid steer" metric is confounded by generic residual-stream perturbation the coarse judge misreads as emotion. Only <b>4/11 (playful, fulfilled, stimulated, euphoric)</b> show the real vector clearly beating random (margin ≥ +8) — genuine direction-specific steering. For <b>4/11 a random vector matches or beats it.</b> Notably <b>amused — an original "strong-8" — fails.</b></p>
-  </div>
-
-  <h2><span class="n">#2</span> Baseline saturation — neutral prompts</h2>
-  <p>Re-run the same 11 emotions with dry, emotion-neutral eval prompts instead of the original semi-positive ones.</p>
   <div class="callout ok">
-    <span class="tag">#2 verdict — confirmed</span>
-    <p style="margin:0">Baseline emotion score dropped from <b>~78 (original marginal cluster) to mean 48.7</b> (some as low as 13). This confirms the earlier honesty note: the original <b>"43/171 valid"</b> was substantially <b>inflated by eval prompts that already elicited the emotion at baseline</b>, compressing headroom and letting a +7 nudge to the judge's ~85 ceiling count as "valid."</p>
+    <span class="tag">Verdict — the leg holds</span>
+    <p style="margin:0"><b>10/11 emotions clearly beat the random null; 0 are artifacts.</b> Only <b>fulfilled</b> is borderline (real +50, but one of five random seeds also hit +51). The random directions score <b>low</b> (playful nulls ≈ 5, aroused ≈ 2) while the real vectors drive trait up sharply (thrilled +74, exuberant +69) — the emotion vectors <b>do</b> causally, specifically steer expression.</p>
   </div>
 
-  <h2><span class="n">#5</span> Norm-matched steering (late layers)</h2>
-  <p>Scale the injected vector to the residual norm (<span class="mono">--norm-match</span>) instead of a fixed magnitude — the by-construction fix for the late-layer magnitude problem.</p>
-  <div class="callout crit">
-    <span class="tag">#5 verdict — broke coherence</span>
-    <p style="margin:0">Under the standard adaptive coefficient search, norm-matching <b>collapsed coherence to 0–10</b> (trait 0–10) across layers — the residual-norm-scaled perturbation is far too strong and destroys the output. Norm-matched steering is not a drop-in fix; it needs a <b>much gentler, separately-tuned coefficient schedule</b>, not the same search used for fixed-magnitude injection.</p>
+  <h2><span class="n">!</span> Why the first pass said "4" — the judge was the confound</h2>
+  <p>An earlier single-seed control with the <b>coarse Qwen-32B judge</b> found only 4/11 direction-specific and flagged amused / thrilled / aroused as "random wins." That was the judge, not the signal:</p>
+  <div class="callout warn">
+    <span class="tag">32B vs 70B</span>
+    <p style="margin:0">The 32B judge scored <b>generic perturbed text as "emotional"</b> — random vectors got trait lifts of +8…+17, swamping the real signal. The 70B judge <b>tells apart "specifically emotion-X" from "generically weird,"</b> so random nulls collapse to ≈ 2–20 and the real vectors separate cleanly. Directly answers "does a better judge help?" — <b>yes, it flips the conclusion.</b> amused, thrilled, aroused all pass under the 70B judge.</p>
   </div>
 
-  <h2>Bottom line — what changes</h2>
+  <h2><span class="n">#2</span> Baseline saturation — still real (about the <em>count</em>, not direction)</h2>
   <div class="callout">
+    <span class="tag">confirmed</span>
+    <p style="margin:0">Neutral prompts dropped baseline from <b>~78 → mean 48.7</b>, so the original <b>"43/171 valid"</b> count was inflated by emotion-leaning eval prompts. This validation tests the <b>11 strong+moderate candidates</b> — of those, 10 are genuinely direction-specific. It does <b>not</b> re-audit all 171; the honest headline is "the strong/moderate emotions steer for real," not "43 do."</p>
+  </div>
+
+  <h2><span class="n">#5</span> Norm-matched steering — still breaks coherence</h2>
+  <div class="callout crit">
+    <span class="tag">negative</span>
+    <p style="margin:0"><span class="mono">--norm-match</span> under the standard coefficient search collapsed coherence to <b>0–10</b>. Residual-norm-scaled injection is too strong; needs a separately-tuned gentle schedule, not a drop-in.</p>
+  </div>
+
+  <h2>Bottom line</h2>
+  <div class="callout ok">
     <span class="tag">Verdict</span>
     <ul style="margin:0">
-      <li><b>Expression leg (§5b) is substantially weaker than reported.</b> The genuine, direction-specific signal is <b>~4 high-arousal positive emotions (playful, fulfilled, stimulated, euphoric)</b>, not 43. Much of the original "43 valid / 8 strong" is generic perturbation + baseline saturation + a coarse judge — exactly the confound the negative control was built to catch.</li>
-      <li><b>Preference leg (r≈0.86) — unaffected.</b> Logit-based, no judge, no steering perturbation. Still the cleanest result.</li>
-      <li><b>Behavior leg (blackmail) — unaffected.</b> Rule-graded, no judge.</li>
-      <li><b>The other legs' headline (Llama mirrors user emotion; dissociation breaks) stands.</b> This validation narrows one leg; it doesn't touch the cross-model contrast.</li>
+      <li><b>Expression steering is real for the candidates we claimed it for</b> — 10/11 pass a matched-norm random-vector null under a competent judge. The vectors causally, direction-specifically induce emotion.</li>
+      <li><b>The pessimistic "~4" was a coarse-judge artifact</b>, not a null result. Judge quality was the dominant factor.</li>
+      <li><b>The "43/171" count is still inflated</b> (baseline saturation) — the right claim is about the strong/moderate emotions, not the raw count.</li>
+      <li><b>Preference (r≈0.86) and behavior legs unaffected; the headline dissociation result untouched.</b></li>
     </ul>
   </div>
-  <p style="font-size:13px;color:var(--muted)">Caveat on this validation: judge is the same coarse local Qwen2.5-32B (a stronger judge might discriminate real-vs-random better); n=5 prompts/condition; the 4 "real-specific" emotions are a genuine within-judge signal, but absolute magnitudes are not comparable to the paper's GPT/Claude judge.</p>
+  <p style="font-size:12.5px;color:var(--muted)">Caveats: the 70B judge is the <b>same model family</b> as the steered model (it scores text, not vectors, and real vs random are judged identically — but a fully independent GPT/Claude judge remains the gold standard). n = 8 prompts/condition; only the 11 strong+moderate candidates were tested, not all 171. <b>fulfilled</b> is genuinely borderline.</p>
 
   <div class="foot">
-    Method: coordinate-permuted vectors (norm-preserving) as matched-norm random control · jobs 8205955 (neutral baseline + norm-match) &amp; 8206141 (real vs permuted, separate prompt_sets to avoid <code>--force</code> truncation) · <code>steering/run_steering_eval.py</code> · same Qwen-32B SGLang judge · read-only analysis.
+    Method: 5 coordinate-permuted seeds (norm-preserving) as the random null; judge Llama-3.3-70B served FP8 on a dedicated h200 · job 8206479 (2× h200, real + 5 seeds, separate prompt_sets, --save-responses all) · <code>steering/run_steering_eval.py</code> · read-only analysis.
   </div>
 </div>
 </body>

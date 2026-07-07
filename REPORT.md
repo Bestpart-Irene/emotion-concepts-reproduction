@@ -184,11 +184,34 @@ other two legs are unaffected (no judge, no steering perturbation).
   collapsed coherence to **0–10** (trait 0–10); residual-norm-scaled injection is far too strong and needs a
   separately-tuned, much gentler schedule — not a drop-in fix.
 
-**Revised verdict on §5b:** the genuine, direction-specific expression-steering signal is **~4 high-arousal
-positive emotions, not 43**. Much of the original count is perturbation + baseline saturation + a coarse
-judge. This *narrows* the expression leg; it does **not** touch the headline dissociation result (§3), the
-preference leg (§5c, r≈0.86, logit-based), or the behavior leg (§5d, rule-graded). Full validation report:
-`docs/steering_validation_EN.pdf`. (Method: permuted vectors as a norm-matched random control; separate
+**Provisional verdict (single seed, 32B judge):** only ~4/11 clearly beat random — but this was **judge-limited**
+(see below).
+
+### 5e-bis. Rigorous re-test — 5-seed null + Llama-70B judge (job 8206479) — supersedes the "~4"
+
+The single-seed control used the coarse Qwen-32B judge and one random permutation. We re-ran it properly:
+**5 independent permutation seeds** per emotion as a null distribution, and a **stronger judge (Llama-3.3-70B,
+served FP8 on a dedicated h200)**. Verdict rule per emotion: *direction-specific* iff real lift > max(5 seeds)
+**and** > null mean + 2σ.
+
+- **10/11 emotions are direction-specific; 0 are artifacts.** thrilled (real +74 vs null 14.5±10.4), exuberant
+  (+69 vs 18.9), euphoric (+62 vs 18.4), playful (+54 vs 4.8), stimulated (+51 vs 21.0), sentimental, amused,
+  alert, aroused, puzzled all clearly beat their random nulls. Only **fulfilled** is borderline (+50 vs a null
+  whose max seed hit +51).
+- **The pessimistic "~4" was a coarse-judge artifact.** Under the 32B judge, random perturbed text scored
+  +8…+17 ("emotional"), swamping the real signal; the 70B judge distinguishes *specifically emotion-X* from
+  *generically weird*, so random nulls collapse to ≈2–20 and the real vectors separate cleanly. **Directly
+  answers "does a better judge help?" — yes, it flips the conclusion.** amused/thrilled/aroused (32B "random
+  wins") all pass under 70B.
+- **Caveats:** the 70B judge is the same model family as the steered model (it scores *text*, not vectors, and
+  real vs random are judged identically — but a fully independent GPT/Claude judge is still the gold standard);
+  n=8 prompts/condition; only the 11 strong+moderate candidates were tested, not all 171.
+
+**Net verdict on §5b:** expression steering is **genuinely direction-specific for the emotions we claimed it
+for** (10/11 candidates pass a matched-norm random null under a competent judge). The **"43/171" count is still
+inflated** by baseline saturation (#2) — the right claim is "the strong/moderate emotions steer for real," not
+"43 do." Does **not** touch §3 (dissociation), §5c (preference, r≈0.86), or §5d (behavior). Full report:
+`docs/steering_validation_EN.pdf`. (Method: 5 coordinate-permuted seeds as the random null; separate
 prompt_sets per condition to avoid `--force` truncating `results.jsonl`.)
 
 ## 6. What's next
